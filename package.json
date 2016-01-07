@@ -4,7 +4,7 @@
   "description": "Lightweight promise polyfill. A+ compliant",
   "main": "Promise.js",
   "scripts": {
-    "test": "JASMINE_CONFIG_PATH=jasmine.json ./node_modules/jasmine/bin/jasmine.js;"
+    "test": "./node_modules/.bin/promises-aplus-tests tests/adapter.js && JASMINE_CONFIG_PATH=jasmine.json ./node_modules/jasmine/bin/jasmine.js;"
   },
   "repository": {
     "type": "git",
