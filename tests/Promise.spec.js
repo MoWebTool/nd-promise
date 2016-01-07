@@ -40,4 +40,26 @@ describe('Promise', function() {
 			expect(done).toBe(true);
 		});
 	});
+	describe('notify progress', function() {
+		it('notify progress', function(done) {
+			var progress = 0;
+			var times = 0;
+			var a = new Promise(function(resolve, reject, notify) {
+				notify(40);
+				setTimeout(function() {
+					times = 1;
+					notify(15);
+				}, 50);
+			}).progress(function(value) {
+				progress += value;
+				if (times === 0) {
+					expect(progress).toBe(40);
+				} else {
+					expect(progress).toBe(40+15);
+				}
+			});
+
+			setTimeout(done, 1000);
+		})
+	})
 });

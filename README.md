@@ -2,7 +2,7 @@
     <img src="http://promises-aplus.github.com/promises-spec/assets/logo-small.png"
          align="right" alt="Promises/A+ logo" />
 </a>
-# Promise 
+# Promise
 [![travis][travis-image]][travis-url]
 
 [travis-image]: https://img.shields.io/travis/taylorhakes/promise-polyfill.svg?style=flat
@@ -17,6 +17,18 @@ For API information about Promises, please check out this article [HTML5Rocks ar
 
 It is extremely lightweight. ***< 1kb Gzipped***
 
+## New in 2.2.0
+```js
+new Promise(function(resolve, reject, notify) {
+  notify(40);
+  setTimeout(function() {
+    notify(15);
+  }, 50);
+}).progress(function(value) {
+  console.log(value);
+});
+```
+
 ## Browser Support
 IE8+, Chrome, Firefox, IOS 4+, Safari 5+, Opera
 
@@ -26,16 +38,16 @@ IE8+, Chrome, Firefox, IOS 4+, Safari 5+, Opera
 - [Promise-min](https://raw.github.com/taylorhakes/promise-polyfill/master/Promise.min.js)
 
 ### Node
-```
+```bash
 npm install promise-polyfill
 ```
 ### Bower
-```
+```bash
 bower install promise-polyfill
 ```
 
 ## Simple use
-```
+```js
 var prom = new Promise(function(resolve, reject) {
   // do a thing, possibly async, then…
 
@@ -58,7 +70,7 @@ Use a `setImmediate` polyfill to fix this issue. [setAsap](https://github.com/ta
 If you polyfill `window.setImmediate` or use `Promise._setImmediateFn(immedateFn)` it will be used instead of `window.setTimeout`
 
 ## Testing
-```
+```bash
 npm install
 npm test
 ```

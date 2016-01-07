@@ -2,85 +2,102 @@
 
 	// Use polyfill for setImmediate for performance gains
 	var asap = (typeof setImmediate === 'function' && setImmediate) ||
-		function(fn) { setTimeout(fn, 1); };
+		function(fn) { setTimeout(fn, 1) }
 
 	// Polyfill for Function.prototype.bind
 	function bind(fn, thisArg) {
 		return function() {
-			fn.apply(thisArg, arguments);
+			fn.apply(thisArg, arguments)
 		}
 	}
 
-	var isArray = Array.isArray || function(value) { return Object.prototype.toString.call(value) === "[object Array]" };
+	var isArray = Array.isArray || function(value) { return Object.prototype.toString.call(value) === "[object Array]" }
 
 	function Promise(fn) {
-		if (typeof this !== 'object') throw new TypeError('Promises must be constructed via new');
-		if (typeof fn !== 'function') throw new TypeError('not a function');
-		this._state = null;
-		this._value = null;
+		if (typeof this !== 'object') throw new TypeError('Promises must be constructed via new')
+		if (typeof fn !== 'function') throw new TypeError('not a function')
+		this._state = null
+		this._value = null
+		this._progress = null
 		this._deferreds = []
 
-		doResolve(fn, bind(resolve, this), bind(reject, this))
+		doResolve(fn, bind(resolve, this), bind(reject, this), bind(notify, this))
 	}
 
 	function handle(deferred) {
-		var me = this;
+		var me = this
 		if (this._state === null) {
-			this._deferreds.push(deferred);
+			this._deferreds.push(deferred)
+			if (deferred.onProgress) {
+				if (me._progress !== null) {
+					asap(function() {
+						deferred.onProgress(me._progress)
+					})
+				}
+			}
 			return
 		}
 		asap(function() {
 			var cb = me._state ? deferred.onFulfilled : deferred.onRejected
 			if (cb === null) {
-				(me._state ? deferred.resolve : deferred.reject)(me._value);
-				return;
+				(me._state ? deferred.resolve : deferred.reject)(me._value)
+				return
 			}
-			var ret;
+			var ret
 			try {
-				ret = cb(me._value);
+				ret = cb(me._value)
 			}
 			catch (e) {
-				deferred.reject(e);
-				return;
+				deferred.reject(e)
+				return
 			}
-			deferred.resolve(ret);
+			deferred.resolve(ret)
 		})
 	}
 
 	function resolve(newValue) {
 		try { //Promise Resolution Procedure: https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
-			if (newValue === this) throw new TypeError('A promise cannot be resolved with itself.');
+			if (newValue === this) throw new TypeError('A promise cannot be resolved with itself.')
 			if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
-				var then = newValue.then;
+				var then = newValue.then
 				if (typeof then === 'function') {
-					doResolve(bind(then, newValue), bind(resolve, this), bind(reject, this));
-					return;
+					doResolve(bind(then, newValue), bind(resolve, this), bind(reject, this), bind(notify, this))
+					return
 				}
 			}
-			this._state = true;
-			this._value = newValue;
-			finale.call(this);
-		} catch (e) { reject.call(this, e); }
+			this._state = true
+			this._value = newValue
+			finale.call(this)
+		} catch (e) { reject.call(this, e) }
 	}
 
 	function reject(newValue) {
-		this._state = false;
-		this._value = newValue;
-		finale.call(this);
+		this._state = false
+		this._value = newValue
+		finale.call(this)
 	}
 
-	function finale() {
+	function notify(progress) {
+		this._progress = progress
+		finale.call(this, true)
+	}
+
+	function finale(keep) {
 		for (var i = 0, len = this._deferreds.length; i < len; i++) {
-			handle.call(this, this._deferreds[i]);
+			handle.call(this, this._deferreds[i])
 		}
-		this._deferreds = null;
+		if (!keep) {
+			this._deferreds = null
+		}
 	}
 
-	function Handler(onFulfilled, onRejected, resolve, reject){
-		this.onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : null;
-		this.onRejected = typeof onRejected === 'function' ? onRejected : null;
-		this.resolve = resolve;
-		this.reject = reject;
+	function Handler(onFulfilled, onRejected, onProgress, resolve, reject, notify){
+		this.onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : null
+		this.onRejected = typeof onRejected === 'function' ? onRejected : null
+		this.onProgress = typeof onProgress === 'function' ? onProgress : null
+		this.resolve = resolve
+		this.reject = reject
+		this.notify = notify
 	}
 
 	/**
@@ -89,88 +106,101 @@
 	 *
 	 * Makes no guarantees about asynchrony.
 	 */
-	function doResolve(fn, onFulfilled, onRejected) {
-		var done = false;
+	function doResolve(fn, onFulfilled, onRejected, onProgress) {
+		var done = false
 		try {
 			fn(function (value) {
-				if (done) return;
-				done = true;
-				onFulfilled(value);
+				if (done) return
+				done = true
+				onFulfilled(value)
 			}, function (reason) {
-				if (done) return;
-				done = true;
-				onRejected(reason);
+				if (done) return
+				done = true
+				onRejected(reason)
+			}, function (progress) {
+				if (done) return
+				onProgress(progress)
 			})
 		} catch (ex) {
-			if (done) return;
-			done = true;
-			onRejected(ex);
+			if (done) return
+			done = true
+			onRejected(ex)
 		}
 	}
 
 	Promise.prototype['catch'] = function (onRejected) {
-		return this.then(null, onRejected);
-	};
+		return this.then(null, onRejected)
+	}
 
-	Promise.prototype.then = function(onFulfilled, onRejected) {
-		var me = this;
-		return new Promise(function(resolve, reject) {
-			handle.call(me, new Handler(onFulfilled, onRejected, resolve, reject));
+	Promise.prototype.progress = function (onProgress) {
+		return this.then(null, null, onProgress)
+	}
+
+	Promise.prototype.then = function(onFulfilled, onRejected, onProgress) {
+		var me = this
+		return new Promise(function(resolve, reject, notify) {
+			handle.call(me, new Handler(onFulfilled, onRejected, onProgress, resolve, reject, notify))
 		})
-	};
+	}
 
 	Promise.all = function () {
-		var args = Array.prototype.slice.call(arguments.length === 1 && isArray(arguments[0]) ? arguments[0] : arguments);
+		var args = Array.prototype.slice.call(arguments.length === 1 && isArray(arguments[0]) ? arguments[0] : arguments)
 
-		return new Promise(function (resolve, reject) {
-			if (args.length === 0) return resolve([]);
-			var remaining = args.length;
+		return new Promise(function (resolve, reject, notify) {
+			if (args.length === 0) return resolve([])
+			var remaining = args.length
 			function res(i, val) {
 				try {
 					if (val && (typeof val === 'object' || typeof val === 'function')) {
-						var then = val.then;
+						var then = val.then
 						if (typeof then === 'function') {
-							then.call(val, function (val) { res(i, val) }, reject);
-							return;
+							then.call(val, function (val) { res(i, val) }, reject, notify)
+							return
 						}
 					}
-					args[i] = val;
+					args[i] = val
 					if (--remaining === 0) {
-						resolve(args);
+						resolve(args)
 					}
 				} catch (ex) {
-					reject(ex);
+					reject(ex)
 				}
 			}
 			for (var i = 0; i < args.length; i++) {
-				res(i, args[i]);
+				res(i, args[i])
 			}
-		});
-	};
+		})
+	}
 
 	Promise.resolve = function (value) {
 		if (value && typeof value === 'object' && value.constructor === Promise) {
-			return value;
+			return value
 		}
 
 		return new Promise(function (resolve) {
-			resolve(value);
-		});
-	};
+			resolve(value)
+		})
+	}
 
 	Promise.reject = function (value) {
 		return new Promise(function (resolve, reject) {
-			reject(value);
-		});
-	};
+			reject(value)
+		})
+	}
+
+	Promise.notify = function (value) {
+		return new Promise(function (resolve, reject, notify) {
+			notify(value)
+		})
+	}
 
 	Promise.race = function (values) {
-		return new Promise(function (resolve, reject) {
+		return new Promise(function (resolve, reject, notify) {
 			for(var i = 0, len = values.length; i < len; i++) {
-				values[i].then(resolve, reject);
+				values[i].then(resolve, reject, notify)
 			}
-		});
-	};
+		})
+	}
 
 	/**
 	 * Set the immediate function to execute callbacks
@@ -178,13 +208,13 @@
 	 * @private
 	 */
 	Promise._setImmediateFn = function _setImmediateFn(fn) {
-		asap = fn;
-	};
-
-	if (typeof module !== 'undefined' && module.exports) {
-		module.exports = Promise;
-	} else if (!root.Promise) {
-		root.Promise = Promise;
+		asap = fn
 	}
 
-})(this);
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = Promise
+	} else {
+		root.Promise = Promise
+	}
+
+})(this)
