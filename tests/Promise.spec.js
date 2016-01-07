@@ -41,7 +41,7 @@ describe('Promise', function() {
 		});
 	});
 	describe('notify progress', function() {
-		it('notify progress', function(done) {
+		it('basic', function(done) {
 			var progress = 0;
 			var times = 0;
 			var a = new Promise(function(resolve, reject, notify) {
@@ -60,6 +60,34 @@ describe('Promise', function() {
 			});
 
 			setTimeout(done, 1000);
-		})
-	})
+		});
+		it('with resolve', function(done) {
+			var a = new Promise(function(resolve, reject, notify) {
+				notify(40);
+				setTimeout(function() {
+					resolve(15);
+				}, 50);
+			}).then(function(value) {
+				expect(value).toBe(15);
+			}).progress(function(value) {
+				expect(value).toBe(40);
+			});
+
+			setTimeout(done, 1000);
+		});
+		it('with reject', function(done) {
+			var a = new Promise(function(resolve, reject, notify) {
+				notify(40);
+				setTimeout(function() {
+					reject(15);
+				}, 50);
+			}).catch(function(value) {
+				expect(value).toBe(15);
+			}).progress(function(value) {
+				expect(value).toBe(40);
+			});
+
+			setTimeout(done, 1000);
+		});
+	});
 });
