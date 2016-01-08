@@ -5,8 +5,8 @@
 # Promise
 [![travis][travis-image]][travis-url]
 
-[travis-image]: https://img.shields.io/travis/taylorhakes/promise-polyfill.svg?style=flat
-[travis-url]: https://travis-ci.org/taylorhakes/promise-polyfill
+[travis-image]: https://img.shields.io/travis/crossjs/promise-polyfill.svg?style=flat
+[travis-url]: https://travis-ci.org/crossjs/promise-polyfill
 
 
 Lightweight ES6 Promise polyfill for the browser and node. Adheres closely to the spec. It is a perfect polyfill IE, Firefox or any other browser that does not support native promises.
@@ -17,16 +17,31 @@ For API information about Promises, please check out this article [HTML5Rocks ar
 
 It is extremely lightweight. ***< 1kb Gzipped***
 
+## New in 2.3.0
+```js
+new Promise(function(resolve, reject, notify) {
+  // resolve, reject, notify
+}).then(function(value) {
+  // do something
+}).catch(function(error) {
+  // do something
+}).progress(function(value) {
+  // do something
+}).finally(function() {
+  // do something
+})
+```
+
 ## New in 2.2.0
 ```js
 new Promise(function(resolve, reject, notify) {
-  notify(40);
+  notify(40)
   setTimeout(function() {
-    notify(15);
-  }, 50);
+    notify(55)
+  }, 50)
 }).progress(function(value) {
-  console.log(value);
-});
+  console.log(value)
+})
 ```
 
 ## Browser Support

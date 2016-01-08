@@ -1,10 +1,12 @@
 {
   "name": "promise-polyfill",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Lightweight promise polyfill. A+ compliant",
   "main": "Promise.js",
   "scripts": {
-    "test": "./node_modules/.bin/promises-aplus-tests tests/adapter.js && JASMINE_CONFIG_PATH=jasmine.json ./node_modules/jasmine/bin/jasmine.js;"
+    "build": "grunt build",
+    "test": "mocha --bail --timeout 200 --slow 99999",
+    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --bail --timeout 200 --slow 99999"
   },
   "repository": {
     "type": "git",
@@ -19,14 +21,19 @@
   "devDependencies": {
     "grunt": "^0.4.4",
     "grunt-contrib-uglify": "^0.4.0",
-    "jasmine": "^2.3.1",
-    "promises-aplus-tests": "*"
+    "promises-aplus-tests": "*",
+    "better-assert": "*",
+    "istanbul": "^0.3.13",
+    "mocha": "*"
   },
   "keywords": [
     "promise",
     "promise-polyfill",
     "ES6",
-    "promises-aplus"
+    "promises-aplus",
+    "notify",
+    "progress",
+    "finally"
   ],
   "dependencies": {}
 }
