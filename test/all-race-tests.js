@@ -1,5 +1,5 @@
 var assert = require('better-assert')
-var Promise = require('../index')
+var Promise = require('../src/core')
 
 var a = { id: 'a'}
 var b = { id: 'b'}

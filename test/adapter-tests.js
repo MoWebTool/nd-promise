@@ -1,5 +1,5 @@
 var tests = require('promises-aplus-tests')
-var Promise = require('../index')
+var Promise = require('../src/core')
 
 tests.mocha({
   resolved: Promise.resolve,
