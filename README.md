@@ -1,23 +1,14 @@
-<a href="http://promises-aplus.github.com/promises-spec">
-    <img src="http://promises-aplus.github.com/promises-spec/assets/logo-small.png"
-         align="right" alt="Promises/A+ logo" />
-</a>
+<a href="http://promises-aplus.github.com/promises-spec"><img src="http://promises-aplus.github.com/promises-spec/assets/logo-small.png" align="right" alt="Promises/A+ logo" /></a>
 # Promise
-[![travis][travis-image]][travis-url]
-[![Coverage Status](coveralls-image)]()
-[travis-image]: https://img.shields.io/travis/crossjs/nd-promise.svg?style=flat
-[travis-url]: https://travis-ci.org/crossjs/nd-promise
-[coveralls-image]: https://coveralls.io/repos/crossjs/nd-promise/badge.svg?branch=master&service=github
-[coveralls-url]: https://coveralls.io/github/crossjs/nd-promise?branch=master
-
+[![Travis](https://img.shields.io/travis/crossjs/nd-promise.svg?style=flat-square)](https://github.com/crossjs/nd-promise)
+[![Coveralls](https://img.shields.io/coveralls/crossjs/nd-promise.svg?style=flat-square)](https://github.com/crossjs/nd-promise)
+[![NPM version](https://img.shields.io/npm/v/nd-promise.svg?style=flat-square)](https://npmjs.org/package/nd-promise)
 
 Lightweight ES6 Promise polyfill for the browser and node. Adheres closely to the spec. It is a perfect polyfill IE, Firefox or any other browser that does not support native promises.
 
 This implementation is based on [taylorhakes/promise-polyfill](https://github.com/taylorhakes/promise-polyfill) and [then/promise](https://github.com/then/promise). It has been changed to use the prototype for performance and memory reasons.
 
 For API information about Promises, please check out this article [HTML5Rocks article](http://www.html5rocks.com/en/tutorials/es6/promises/).
-
-It is extremely lightweight. ***< 1kb Gzipped***
 
 ## New in 2.3.0
 ```js
