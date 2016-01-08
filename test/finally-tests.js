@@ -1,5 +1,5 @@
 var assert = require('better-assert')
-var Promise = require('../Promise')
+var Promise = require('../index')
 
 describe("Promise#finally(done)", function() {
 

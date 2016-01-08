@@ -1,5 +1,5 @@
 var assert = require('better-assert')
-var Promise = require('../Promise')
+var Promise = require('../index')
 
 describe("Promise#progress(listener)", function() {
   describe('Promise.notify(progress)', function() {

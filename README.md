@@ -4,14 +4,16 @@
 </a>
 # Promise
 [![travis][travis-image]][travis-url]
-
-[travis-image]: https://img.shields.io/travis/crossjs/promise-polyfill.svg?style=flat
-[travis-url]: https://travis-ci.org/crossjs/promise-polyfill
+[![Coverage Status](coveralls-image)]()
+[travis-image]: https://img.shields.io/travis/crossjs/nd-promise.svg?style=flat
+[travis-url]: https://travis-ci.org/crossjs/nd-promise
+[coveralls-image]: https://coveralls.io/repos/crossjs/nd-promise/badge.svg?branch=master&service=github
+[coveralls-url]: https://coveralls.io/github/crossjs/nd-promise?branch=master
 
 
 Lightweight ES6 Promise polyfill for the browser and node. Adheres closely to the spec. It is a perfect polyfill IE, Firefox or any other browser that does not support native promises.
 
-This implementation is based on [then/promise](https://github.com/then/promise). It has been changed to use the prototype for performance and memory reasons.
+This implementation is based on [taylorhakes/promise-polyfill](https://github.com/taylorhakes/promise-polyfill) and [then/promise](https://github.com/then/promise). It has been changed to use the prototype for performance and memory reasons.
 
 For API information about Promises, please check out this article [HTML5Rocks article](http://www.html5rocks.com/en/tutorials/es6/promises/).
 
@@ -49,16 +51,11 @@ IE8+, Chrome, Firefox, IOS 4+, Safari 5+, Opera
 
 ## Downloads
 
-- [Promise](Promise.js)
-- [Promise-min](Promise.min.js)
+- [nd-promise](index.js)
 
 ### Node
 ```bash
-npm install promise-polyfill
-```
-### Bower
-```bash
-bower install promise-polyfill
+$ npm install nd-promise
 ```
 
 ## Simple use
@@ -78,11 +75,6 @@ prom.then(function() {
   ...
 });
 ```
-## Performance
-By default promise-polyfill uses `setImmediate`, but falls back to `setTimeout` for executing asynchronously. If a browser does not support `setImmediate`, you may see performance issues.
-Use a `setImmediate` polyfill to fix this issue. [setAsap](https://github.com/taylorhakes/setAsap) or [setImmediate](https://github.com/YuzuJS/setImmediate) work well.
-
-If you polyfill `window.setImmediate` or use `Promise._setImmediateFn(immedateFn)` it will be used instead of `window.setTimeout`
 
 ## Testing
 ```bash
