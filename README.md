@@ -10,6 +10,9 @@ This implementation is based on [taylorhakes/promise-polyfill](https://github.co
 
 For API information about Promises, please check out this article [HTML5Rocks article](http://www.html5rocks.com/en/tutorials/es6/promises/).
 
+## New in 2.4.0
+Rewrite core and test with ES6
+
 ## New in 2.3.0
 ```js
 new Promise(function(resolve, reject, notify) {

@@ -1,26 +1,26 @@
-var assert = require('better-assert')
-var Promise = require('../src/core')
+import assert from 'better-assert'
+import Promise from '../src/core'
 
-describe("Promise#progress(listener)", function() {
-  describe('Promise.notify(progress)', function() {
-    it('basic', function(done) {
+describe('Promise#progress(listener)', () => {
+  describe('Promise.notify(progress)', () => {
+    it('basic', done => {
       Promise.notify(45)
-        .progress(function(value) {
+        .progress(value => {
           assert(value === 45)
           done()
         })
     })
   })
-  describe('common use', function() {
-    it('basic', function(done) {
-      var times = 0
-      new Promise(function(resolve, reject, notify) {
+  describe('common use', () => {
+    it('basic', done => {
+      let times = 0
+      new Promise((resolve, reject, notify) => {
         notify(40)
-        setTimeout(function() {
+        setTimeout(() => {
           times = 1
           notify(55)
         }, 50)
-      }).progress(function(value) {
+      }).progress(value => {
         if (times === 0) {
           assert(value === 40)
         } else {
@@ -29,36 +29,36 @@ describe("Promise#progress(listener)", function() {
         }
       })
     })
-    it('with resolve', function(done) {
-      var progress = 0
-      new Promise(function(resolve, reject, notify) {
+    it('with resolve', done => {
+      let progress = 0
+      new Promise((resolve, reject, notify) => {
         notify((progress = 40))
         resolve(15)
-        setTimeout(function() {
+        setTimeout(() => {
           notify((progress = 55))
         }, 50)
-      }).then(function(value) {
-        assert(value === 15)
-      }).progress(function(value) {
+      })
+      .then(value => assert(value === 15))
+      .progress(value => {
         assert(value === progress)
         if (progress === 55) {
           // never reach here
           assert(false)
         }
       })
-      setTimeout(done, 100)
+      .finally(done)
     })
-    it('with reject', function(done) {
-      var progress = 0
-      new Promise(function(resolve, reject, notify) {
+    it('with reject', done => {
+      let progress = 0
+      new Promise((resolve, reject, notify) => {
         notify((progress = 40))
         reject(15)
-        setTimeout(function() {
+        setTimeout(() => {
           notify((progress = 55))
         }, 50)
-      }).catch(function(value) {
-        assert(value === 15)
-      }).progress(function(value) {
+      })
+      .catch(value => assert(value === 15))
+      .progress(value => {
         assert(value === progress)
         if (progress === 55) {
           // never reach here

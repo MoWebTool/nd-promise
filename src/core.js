@@ -1,13 +1,6 @@
 import 'setimmediate'
 
-// Use polyfill for setImmediate for performance gains
-const asap = setImmediate
-
-const isArray = Array.isArray || function (value) {
-  return Object.prototype.toString.call(value) === '[object Array]'
-}
-
-function NPromise (fn) {
+function NP (fn) {
   if (typeof this !== 'object') throw new TypeError('Promises must be constructed via new')
   if (typeof fn !== 'function') throw new TypeError('not a function')
   this._state = null
@@ -24,14 +17,14 @@ function handle (deferred) {
     this._deferreds.push(deferred)
     if (deferred.onProgress) {
       if (me._progress !== null) {
-        asap(() => {
+        setImmediate(() => {
           deferred.onProgress(me._progress)
         })
       }
     }
     return
   }
-  asap(() => {
+  setImmediate(() => {
     const cb = me._state ? deferred.onFulfilled : deferred.onRejected
     if (cb === null) {
       (me._state ? deferred.resolve : deferred.reject)(me._value)
@@ -119,42 +112,52 @@ function doResolve (fn, onFulfilled, onRejected, onProgress) {
       if (done) return
       onProgress(progress)
     })
-  } catch (ex) {
+  } catch (e) {
     if (done) return
     done = true
-    onRejected(ex)
+    onRejected(e)
   }
 }
 
-NPromise.prototype['catch'] = function (onRejected) {
+NP.prototype['catch'] = function (onRejected) {
   return this.then(null, onRejected)
 }
 
-NPromise.prototype['finally'] = function (done) {
-  return this.then(value => NPromise.resolve(done()).then(() => {
+NP.prototype['finally'] = function (done) {
+  return this.then(value => NP.resolve(done()).then(() => {
     return value
-  }), reason => NPromise.resolve(done()).then(() => {
+  }), reason => NP.resolve(done()).then(() => {
     throw reason
   }))
 }
 
-NPromise.prototype.progress = function (onProgress) {
+NP.prototype.progress = function (onProgress) {
   return this.then(null, null, onProgress)
 }
 
-NPromise.prototype.then = function (onFulfilled, onRejected, onProgress) {
+NP.prototype.then = function (onFulfilled, onRejected, onProgress) {
   const me = this
-  return new NPromise((resolve, reject, notify) => {
+  return new NP((resolve, reject, notify) => {
     handle.call(me, new Handler(onFulfilled, onRejected, onProgress, resolve, reject, notify))
   })
 }
 
-NPromise.all = () => {
-  const args = Array.prototype.slice.call(arguments.length === 1 && isArray(arguments[0]) ? arguments[0] : arguments)
+NP.resolve = value => {
+  if (value && typeof value === 'object' && value.constructor === NP) {
+    return value
+  }
 
-  return new NPromise((resolve, reject, notify) => {
-    if (args.length === 0) return resolve([])
-    let remaining = args.length
+  return new NP(resolve => resolve(value))
+}
+
+NP.reject = value => new NP((resolve, reject) => reject(value))
+
+NP.notify = value => new NP((resolve, reject, notify) => notify(value))
+
+NP.all = values => {
+  return new NP((resolve, reject, notify) => {
+    if (values.length === 0) return resolve([])
+    let remaining = values.length
 
     function res (i, val) {
       try {
@@ -167,42 +170,26 @@ NPromise.all = () => {
             return
           }
         }
-        args[i] = val
+        values[i] = val
         if (--remaining === 0) {
-          resolve(args)
+          resolve(values)
         }
-      } catch (ex) {
-        reject(ex)
+      } catch (e) {
+        reject(e)
       }
     }
-    for (let i = 0; i < args.length; i++) {
-      res(i, args[i])
+    for (let i = 0; i < values.length; i++) {
+      res(i, values[i])
     }
   })
 }
 
-NPromise.resolve = value => {
-  if (value && typeof value === 'object' && value.constructor === NPromise) {
-    return value
-  }
-
-  return new NPromise(resolve => {
-    resolve(value)
+NP.race = values => {
+  return new NP((resolve, reject, notify) => {
+    for (let i = 0, len = values.length; i < len; i++) {
+      NP.resolve(values[i]).then(resolve, reject, notify)
+    }
   })
 }
 
-NPromise.reject = value => new NPromise((resolve, reject) => {
-  reject(value)
-})
-
-NPromise.notify = value => new NPromise((resolve, reject, notify) => {
-  notify(value)
-})
-
-NPromise.race = values => new NPromise((resolve, reject, notify) => {
-  for (let i = 0, len = values.length; i < len; i++) {
-    NPromise.resolve(values[i]).then(resolve, reject, notify)
-  }
-})
-
-export default NPromise
+export default NP
