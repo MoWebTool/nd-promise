@@ -1,6 +1,6 @@
 {
   "name": "nd-promise",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Lightweight promise polyfill. A+ compliant. Implements notify, progress, and finally.",
   "main": "index.js",
   "scripts": {
