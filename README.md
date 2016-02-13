@@ -1,7 +1,7 @@
 <a href="http://promises-aplus.github.com/promises-spec"><img src="http://promises-aplus.github.com/promises-spec/assets/logo-small.png" align="right" alt="Promises/A+ logo" /></a>
 # Promise
-[![Travis](https://img.shields.io/travis/crossjs/nd-promise.svg?style=flat-square)](https://github.com/crossjs/nd-promise)
-[![Coveralls](https://img.shields.io/coveralls/crossjs/nd-promise.svg?style=flat-square)](https://github.com/crossjs/nd-promise)
+[![Travis](https://img.shields.io/travis/ndfront/nd-promise.svg?style=flat-square)](https://github.com/ndfront/nd-promise)
+[![Coveralls](https://img.shields.io/coveralls/ndfront/nd-promise.svg?style=flat-square)](https://github.com/ndfront/nd-promise)
 [![NPM version](https://img.shields.io/npm/v/nd-promise.svg?style=flat-square)](https://npmjs.org/package/nd-promise)
 
 Lightweight ES6 Promise polyfill for the browser and node. Adheres closely to the spec. It is a perfect polyfill IE, Firefox or any other browser that does not support native promises.
