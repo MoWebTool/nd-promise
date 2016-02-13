@@ -1,1 +1,630 @@
-!function(t,e){"object"==typeof exports&&"object"==typeof module?module.exports=e():"function"==typeof define&&define.amd?define([],e):"object"==typeof exports?exports.ndpromise=e():t.ndpromise=e()}(this,function(){return function(t){function e(o){if(n[o])return n[o].exports;var r=n[o]={exports:{},id:o,loaded:!1};return t[o].call(r.exports,r,r.exports,e),r.loaded=!0,r.exports}var n={};return e.m=t,e.c=n,e.p="",e(0)}([function(t,e,n){(function(o){"use strict";function r(t){if("object"!==d(this))throw new TypeError("Promises must be constructed via new");if("function"!=typeof t)throw new TypeError("not a function");this._state=null,this._value=null,this._progress=null,this._deferreds=[],a(t,u.bind(this),c.bind(this),s.bind(this))}function i(t){var e=this;return null===this._state?(this._deferreds.push(t),void(t.onProgress&&null!==e._progress&&o(function(){t.onProgress(e._progress)}))):void o(function(){var n=e._state?t.onFulfilled:t.onRejected;if(null===n)return void(e._state?t.resolve:t.reject)(e._value);var o=void 0;try{o=n(e._value)}catch(r){return void t.reject(r)}t.resolve(o)})}function u(t){try{if(t===this)throw new TypeError("A promise cannot be resolved with itself.");if(t&&("object"===("undefined"==typeof t?"undefined":d(t))||"function"==typeof t)){var e=t.then;if("function"==typeof e)return void a(e.bind(t),u.bind(this),c.bind(this),s.bind(this))}this._state=!0,this._value=t,f.call(this)}catch(n){c.call(this,n)}}function c(t){this._state=!1,this._value=t,f.call(this)}function s(t){this._progress=t,f.call(this,!0)}function f(t){for(var e=0,n=this._deferreds.length;n>e;e++)i.call(this,this._deferreds[e]);t||(this._deferreds=null)}function l(t,e,n,o,r,i){this.onFulfilled="function"==typeof t?t:null,this.onRejected="function"==typeof e?e:null,this.onProgress="function"==typeof n?n:null,this.resolve=o,this.reject=r,this.notify=i}function a(t,e,n,o){var r=!1;try{t(function(t){r||(r=!0,e(t))},function(t){r||(r=!0,n(t))},function(t){r||o(t)})}catch(i){if(r)return;r=!0,n(i)}}var d="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol?"symbol":typeof t};Object.defineProperty(e,"__esModule",{value:!0}),n(3),r.prototype["catch"]=function(t){return this.then(null,t)},r.prototype["finally"]=function(t){return this.then(function(e){return r.resolve(t()).then(function(){return e})},function(e){return r.resolve(t()).then(function(){throw e})})},r.prototype.progress=function(t){return this.then(null,null,t)},r.prototype.then=function(t,e,n){var o=this;return new r(function(r,u,c){i.call(o,new l(t,e,n,r,u,c))})},r.resolve=function(t){return t&&"object"===("undefined"==typeof t?"undefined":d(t))&&t.constructor===r?t:new r(function(e){return e(t)})},r.reject=function(t){return new r(function(e,n){return n(t)})},r.notify=function(t){return new r(function(e,n,o){return o(t)})},r.all=function(t){return new r(function(e,n,o){function r(u,c){try{if(c&&("object"===("undefined"==typeof c?"undefined":d(c))||"function"==typeof c)){var s=c.then;if("function"==typeof s)return void s.call(c,function(t){r(u,t)},n,o)}t[u]=c,0===--i&&e(t)}catch(f){n(f)}}if(0===t.length)return e([]);for(var i=t.length,u=0;u<t.length;u++)r(u,t[u])})},r.race=function(t){return new r(function(e,n,o){for(var i=0,u=t.length;u>i;i++)r.resolve(t[i]).then(e,n,o)})},e["default"]=r,t.exports=e["default"]}).call(e,n(1).setImmediate)},function(t,e,n){(function(t,o){function r(t,e){this._id=t,this._clearFn=e}var i=n(2).nextTick,u=Function.prototype.apply,c=Array.prototype.slice,s={},f=0;e.setTimeout=function(){return new r(u.call(setTimeout,window,arguments),clearTimeout)},e.setInterval=function(){return new r(u.call(setInterval,window,arguments),clearInterval)},e.clearTimeout=e.clearInterval=function(t){t.close()},r.prototype.unref=r.prototype.ref=function(){},r.prototype.close=function(){this._clearFn.call(window,this._id)},e.enroll=function(t,e){clearTimeout(t._idleTimeoutId),t._idleTimeout=e},e.unenroll=function(t){clearTimeout(t._idleTimeoutId),t._idleTimeout=-1},e._unrefActive=e.active=function(t){clearTimeout(t._idleTimeoutId);var e=t._idleTimeout;e>=0&&(t._idleTimeoutId=setTimeout(function(){t._onTimeout&&t._onTimeout()},e))},e.setImmediate="function"==typeof t?t:function(t){var n=f++,o=arguments.length<2?!1:c.call(arguments,1);return s[n]=!0,i(function(){s[n]&&(o?t.apply(null,o):t.call(null),e.clearImmediate(n))}),n},e.clearImmediate="function"==typeof o?o:function(t){delete s[t]}}).call(e,n(1).setImmediate,n(1).clearImmediate)},function(t,e){function n(){f=!1,u.length?s=u.concat(s):l=-1,s.length&&o()}function o(){if(!f){var t=setTimeout(n);f=!0;for(var e=s.length;e;){for(u=s,s=[];++l<e;)u&&u[l].run();l=-1,e=s.length}u=null,f=!1,clearTimeout(t)}}function r(t,e){this.fun=t,this.array=e}function i(){}var u,c=t.exports={},s=[],f=!1,l=-1;c.nextTick=function(t){var e=new Array(arguments.length-1);if(arguments.length>1)for(var n=1;n<arguments.length;n++)e[n-1]=arguments[n];s.push(new r(t,e)),1!==s.length||f||setTimeout(o,0)},r.prototype.run=function(){this.fun.apply(null,this.array)},c.title="browser",c.browser=!0,c.env={},c.argv=[],c.version="",c.versions={},c.on=i,c.addListener=i,c.once=i,c.off=i,c.removeListener=i,c.removeAllListeners=i,c.emit=i,c.binding=function(t){throw new Error("process.binding is not supported")},c.cwd=function(){return"/"},c.chdir=function(t){throw new Error("process.chdir is not supported")},c.umask=function(){return 0}},function(t,e,n){(function(t,e,n){!function(t,e){"use strict";function o(t){return m[h]=r.apply(e,t),h++}function r(t){var n=[].slice.call(arguments,1);return function(){"function"==typeof t?t.apply(e,n):new Function(""+t)()}}function i(t){if(v)setTimeout(r(i,t),0);else{var e=m[t];if(e){v=!0;try{e()}finally{u(t),v=!1}}}}function u(t){delete m[t]}function c(){p=function(){var t=o(arguments);return n.nextTick(r(i,t)),t}}function s(){if(t.postMessage&&!t.importScripts){var e=!0,n=t.onmessage;return t.onmessage=function(){e=!1},t.postMessage("","*"),t.onmessage=n,e}}function f(){var e="setImmediate$"+Math.random()+"$",n=function(n){n.source===t&&"string"==typeof n.data&&0===n.data.indexOf(e)&&i(+n.data.slice(e.length))};t.addEventListener?t.addEventListener("message",n,!1):t.attachEvent("onmessage",n),p=function(){var n=o(arguments);return t.postMessage(e+n,"*"),n}}function l(){var t=new MessageChannel;t.port1.onmessage=function(t){var e=t.data;i(e)},p=function(){var e=o(arguments);return t.port2.postMessage(e),e}}function a(){var t=y.documentElement;p=function(){var e=o(arguments),n=y.createElement("script");return n.onreadystatechange=function(){i(e),n.onreadystatechange=null,t.removeChild(n),n=null},t.appendChild(n),e}}function d(){p=function(){var t=o(arguments);return setTimeout(r(i,t),0),t}}if(!t.setImmediate){var p,h=1,m={},v=!1,y=t.document,g=Object.getPrototypeOf&&Object.getPrototypeOf(t);g=g&&g.setTimeout?g:t,"[object process]"==={}.toString.call(t.process)?c():s()?f():t.MessageChannel?l():y&&"onreadystatechange"in y.createElement("script")?a():d(),g.setImmediate=p,g.clearImmediate=u}}("undefined"==typeof self?"undefined"==typeof t?this:t:self)}).call(e,function(){return this}(),n(1).clearImmediate,n(2))}])});
+exports["NP"] =
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+
+
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(setImmediate) {'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	__webpack_require__(3);
+
+	function NP(fn) {
+	  if (_typeof(this) !== 'object') throw new TypeError('Promises must be constructed via new');
+	  if (typeof fn !== 'function') throw new TypeError('not a function');
+	  this._state = null;
+	  this._value = null;
+	  this._progress = null;
+	  this._deferreds = [];
+
+	  doResolve(fn, resolve.bind(this), reject.bind(this), notify.bind(this));
+	}
+
+	function handle(deferred) {
+	  var me = this;
+	  if (this._state === null) {
+	    this._deferreds.push(deferred);
+	    if (deferred.onProgress) {
+	      if (me._progress !== null) {
+	        setImmediate(function () {
+	          deferred.onProgress(me._progress);
+	        });
+	      }
+	    }
+	    return;
+	  }
+	  setImmediate(function () {
+	    var cb = me._state ? deferred.onFulfilled : deferred.onRejected;
+	    if (cb === null) {
+	      (me._state ? deferred.resolve : deferred.reject)(me._value);
+	      return;
+	    }
+	    var ret = undefined;
+	    try {
+	      ret = cb(me._value);
+	    } catch (e) {
+	      deferred.reject(e);
+	      return;
+	    }
+	    deferred.resolve(ret);
+	  });
+	}
+
+	function resolve(newValue) {
+	  try {
+	    // Promise Resolution Procedure: https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
+	    if (newValue === this) {
+	      throw new TypeError('A promise cannot be resolved with itself.');
+	    }
+	    if (newValue && ((typeof newValue === 'undefined' ? 'undefined' : _typeof(newValue)) === 'object' || typeof newValue === 'function')) {
+	      var then = newValue.then;
+	      if (typeof then === 'function') {
+	        doResolve(then.bind(newValue), resolve.bind(this), reject.bind(this), notify.bind(this));
+	        return;
+	      }
+	    }
+	    this._state = true;
+	    this._value = newValue;
+	    finale.call(this);
+	  } catch (e) {
+	    reject.call(this, e);
+	  }
+	}
+
+	function reject(newValue) {
+	  this._state = false;
+	  this._value = newValue;
+	  finale.call(this);
+	}
+
+	function notify(progress) {
+	  this._progress = progress;
+	  finale.call(this, true);
+	}
+
+	function finale(keep) {
+	  for (var i = 0, len = this._deferreds.length; i < len; i++) {
+	    handle.call(this, this._deferreds[i]);
+	  }
+	  if (!keep) {
+	    this._deferreds = null;
+	  }
+	}
+
+	function Handler(onFulfilled, onRejected, onProgress, resolve, reject, notify) {
+	  this.onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : null;
+	  this.onRejected = typeof onRejected === 'function' ? onRejected : null;
+	  this.onProgress = typeof onProgress === 'function' ? onProgress : null;
+	  this.resolve = resolve;
+	  this.reject = reject;
+	  this.notify = notify;
+	}
+
+	/**
+	 * Take a potentially misbehaving resolver function and make sure
+	 * onFulfilled and onRejected are only called once.
+	 *
+	 * Makes no guarantees about asynchrony.
+	 */
+	function doResolve(fn, onFulfilled, onRejected, onProgress) {
+	  var done = false;
+	  try {
+	    fn(function (value) {
+	      if (done) return;
+	      done = true;
+	      onFulfilled(value);
+	    }, function (reason) {
+	      if (done) return;
+	      done = true;
+	      onRejected(reason);
+	    }, function (progress) {
+	      if (done) return;
+	      onProgress(progress);
+	    });
+	  } catch (e) {
+	    if (done) return;
+	    done = true;
+	    onRejected(e);
+	  }
+	}
+
+	NP.prototype['catch'] = function (onRejected) {
+	  return this.then(null, onRejected);
+	};
+
+	NP.prototype['finally'] = function (done) {
+	  return this.then(function (value) {
+	    return NP.resolve(done()).then(function () {
+	      return value;
+	    });
+	  }, function (reason) {
+	    return NP.resolve(done()).then(function () {
+	      throw reason;
+	    });
+	  });
+	};
+
+	NP.prototype.progress = function (onProgress) {
+	  return this.then(null, null, onProgress);
+	};
+
+	NP.prototype.then = function (onFulfilled, onRejected, onProgress) {
+	  var me = this;
+	  return new NP(function (resolve, reject, notify) {
+	    handle.call(me, new Handler(onFulfilled, onRejected, onProgress, resolve, reject, notify));
+	  });
+	};
+
+	NP.resolve = function (value) {
+	  if (value && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && value.constructor === NP) {
+	    return value;
+	  }
+
+	  return new NP(function (resolve) {
+	    return resolve(value);
+	  });
+	};
+
+	NP.reject = function (value) {
+	  return new NP(function (resolve, reject) {
+	    return reject(value);
+	  });
+	};
+
+	NP.notify = function (value) {
+	  return new NP(function (resolve, reject, notify) {
+	    return notify(value);
+	  });
+	};
+
+	NP.all = function (values) {
+	  return new NP(function (resolve, reject, notify) {
+	    if (values.length === 0) return resolve([]);
+	    var remaining = values.length;
+
+	    function res(i, val) {
+	      try {
+	        if (val && ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) === 'object' || typeof val === 'function')) {
+	          var then = val.then;
+	          if (typeof then === 'function') {
+	            then.call(val, function (val) {
+	              res(i, val);
+	            }, reject, notify);
+	            return;
+	          }
+	        }
+	        values[i] = val;
+	        if (--remaining === 0) {
+	          resolve(values);
+	        }
+	      } catch (e) {
+	        reject(e);
+	      }
+	    }
+	    for (var i = 0; i < values.length; i++) {
+	      res(i, values[i]);
+	    }
+	  });
+	};
+
+	NP.race = function (values) {
+	  return new NP(function (resolve, reject, notify) {
+	    for (var i = 0, len = values.length; i < len; i++) {
+	      NP.resolve(values[i]).then(resolve, reject, notify);
+	    }
+	  });
+	};
+
+	exports.default = NP;
+	module.exports = exports['default'];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1).setImmediate))
+
+/***/ },
+/* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(2).nextTick;
+	var apply = Function.prototype.apply;
+	var slice = Array.prototype.slice;
+	var immediateIds = {};
+	var nextImmediateId = 0;
+
+	// DOM APIs, for completeness
+
+	exports.setTimeout = function() {
+	  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+	};
+	exports.setInterval = function() {
+	  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+	};
+	exports.clearTimeout =
+	exports.clearInterval = function(timeout) { timeout.close(); };
+
+	function Timeout(id, clearFn) {
+	  this._id = id;
+	  this._clearFn = clearFn;
+	}
+	Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+	Timeout.prototype.close = function() {
+	  this._clearFn.call(window, this._id);
+	};
+
+	// Does not start the time, just sets up the members needed.
+	exports.enroll = function(item, msecs) {
+	  clearTimeout(item._idleTimeoutId);
+	  item._idleTimeout = msecs;
+	};
+
+	exports.unenroll = function(item) {
+	  clearTimeout(item._idleTimeoutId);
+	  item._idleTimeout = -1;
+	};
+
+	exports._unrefActive = exports.active = function(item) {
+	  clearTimeout(item._idleTimeoutId);
+
+	  var msecs = item._idleTimeout;
+	  if (msecs >= 0) {
+	    item._idleTimeoutId = setTimeout(function onTimeout() {
+	      if (item._onTimeout)
+	        item._onTimeout();
+	    }, msecs);
+	  }
+	};
+
+	// That's not how node.js implements it but the exposed api is the same.
+	exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
+	  var id = nextImmediateId++;
+	  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
+
+	  immediateIds[id] = true;
+
+	  nextTick(function onNextTick() {
+	    if (immediateIds[id]) {
+	      // fn.call() is faster so we optimize for the common use-case
+	      // @see http://jsperf.com/call-apply-segu
+	      if (args) {
+	        fn.apply(null, args);
+	      } else {
+	        fn.call(null);
+	      }
+	      // Prevent ids from leaking
+	      exports.clearImmediate(id);
+	    }
+	  });
+
+	  return id;
+	};
+
+	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
+	  delete immediateIds[id];
+	};
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1).setImmediate, __webpack_require__(1).clearImmediate))
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	// shim for using process in browser
+
+	var process = module.exports = {};
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+
+	function cleanUpNextTick() {
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = setTimeout(cleanUpNextTick);
+	    draining = true;
+
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    clearTimeout(timeout);
+	}
+
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        setTimeout(drainQueue, 0);
+	    }
+	};
+
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
+	};
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+
+	function noop() {}
+
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global, clearImmediate, process) {(function (global, undefined) {
+	    "use strict";
+
+	    if (global.setImmediate) {
+	        return;
+	    }
+
+	    var nextHandle = 1; // Spec says greater than zero
+	    var tasksByHandle = {};
+	    var currentlyRunningATask = false;
+	    var doc = global.document;
+	    var setImmediate;
+
+	    function addFromSetImmediateArguments(args) {
+	        tasksByHandle[nextHandle] = partiallyApplied.apply(undefined, args);
+	        return nextHandle++;
+	    }
+
+	    // This function accepts the same arguments as setImmediate, but
+	    // returns a function that requires no arguments.
+	    function partiallyApplied(handler) {
+	        var args = [].slice.call(arguments, 1);
+	        return function() {
+	            if (typeof handler === "function") {
+	                handler.apply(undefined, args);
+	            } else {
+	                (new Function("" + handler))();
+	            }
+	        };
+	    }
+
+	    function runIfPresent(handle) {
+	        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+	        // So if we're currently running a task, we'll need to delay this invocation.
+	        if (currentlyRunningATask) {
+	            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+	            // "too much recursion" error.
+	            setTimeout(partiallyApplied(runIfPresent, handle), 0);
+	        } else {
+	            var task = tasksByHandle[handle];
+	            if (task) {
+	                currentlyRunningATask = true;
+	                try {
+	                    task();
+	                } finally {
+	                    clearImmediate(handle);
+	                    currentlyRunningATask = false;
+	                }
+	            }
+	        }
+	    }
+
+	    function clearImmediate(handle) {
+	        delete tasksByHandle[handle];
+	    }
+
+	    function installNextTickImplementation() {
+	        setImmediate = function() {
+	            var handle = addFromSetImmediateArguments(arguments);
+	            process.nextTick(partiallyApplied(runIfPresent, handle));
+	            return handle;
+	        };
+	    }
+
+	    function canUsePostMessage() {
+	        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+	        // where `global.postMessage` means something completely different and can't be used for this purpose.
+	        if (global.postMessage && !global.importScripts) {
+	            var postMessageIsAsynchronous = true;
+	            var oldOnMessage = global.onmessage;
+	            global.onmessage = function() {
+	                postMessageIsAsynchronous = false;
+	            };
+	            global.postMessage("", "*");
+	            global.onmessage = oldOnMessage;
+	            return postMessageIsAsynchronous;
+	        }
+	    }
+
+	    function installPostMessageImplementation() {
+	        // Installs an event handler on `global` for the `message` event: see
+	        // * https://developer.mozilla.org/en/DOM/window.postMessage
+	        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+	        var messagePrefix = "setImmediate$" + Math.random() + "$";
+	        var onGlobalMessage = function(event) {
+	            if (event.source === global &&
+	                typeof event.data === "string" &&
+	                event.data.indexOf(messagePrefix) === 0) {
+	                runIfPresent(+event.data.slice(messagePrefix.length));
+	            }
+	        };
+
+	        if (global.addEventListener) {
+	            global.addEventListener("message", onGlobalMessage, false);
+	        } else {
+	            global.attachEvent("onmessage", onGlobalMessage);
+	        }
+
+	        setImmediate = function() {
+	            var handle = addFromSetImmediateArguments(arguments);
+	            global.postMessage(messagePrefix + handle, "*");
+	            return handle;
+	        };
+	    }
+
+	    function installMessageChannelImplementation() {
+	        var channel = new MessageChannel();
+	        channel.port1.onmessage = function(event) {
+	            var handle = event.data;
+	            runIfPresent(handle);
+	        };
+
+	        setImmediate = function() {
+	            var handle = addFromSetImmediateArguments(arguments);
+	            channel.port2.postMessage(handle);
+	            return handle;
+	        };
+	    }
+
+	    function installReadyStateChangeImplementation() {
+	        var html = doc.documentElement;
+	        setImmediate = function() {
+	            var handle = addFromSetImmediateArguments(arguments);
+	            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+	            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+	            var script = doc.createElement("script");
+	            script.onreadystatechange = function () {
+	                runIfPresent(handle);
+	                script.onreadystatechange = null;
+	                html.removeChild(script);
+	                script = null;
+	            };
+	            html.appendChild(script);
+	            return handle;
+	        };
+	    }
+
+	    function installSetTimeoutImplementation() {
+	        setImmediate = function() {
+	            var handle = addFromSetImmediateArguments(arguments);
+	            setTimeout(partiallyApplied(runIfPresent, handle), 0);
+	            return handle;
+	        };
+	    }
+
+	    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+	    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
+	    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
+
+	    // Don't get fooled by e.g. browserify environments.
+	    if ({}.toString.call(global.process) === "[object process]") {
+	        // For Node.js before 0.9
+	        installNextTickImplementation();
+
+	    } else if (canUsePostMessage()) {
+	        // For non-IE10 modern browsers
+	        installPostMessageImplementation();
+
+	    } else if (global.MessageChannel) {
+	        // For web workers, where supported
+	        installMessageChannelImplementation();
+
+	    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
+	        // For IE 6–8
+	        installReadyStateChangeImplementation();
+
+	    } else {
+	        // For older browsers
+	        installSetTimeoutImplementation();
+	    }
+
+	    attachTo.setImmediate = setImmediate;
+	    attachTo.clearImmediate = clearImmediate;
+	}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(1).clearImmediate, __webpack_require__(2)))
+
+/***/ }
+/******/ ]);

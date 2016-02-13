@@ -1,8 +1,8 @@
 {
   "name": "nd-promise",
-  "version": "2.4.1",
+  "version": "3.0.0",
   "description": "Lightweight promise polyfill. A+ compliant. Implements notify, progress, and finally.",
-  "main": "index.js",
+  "main": "lib/core.js",
   "scripts": {
     "compile": "webpack",
     "test": "mocha --compilers js:babel-core/register --bail --timeout 200 --slow 99999",
