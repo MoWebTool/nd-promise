@@ -13,8 +13,8 @@ function NP (fn) {
 
 function handle (deferred) {
   const me = this
-  if (this._state === null) {
-    this._deferreds.push(deferred)
+  if (me._state === null) {
+    me._deferreds.push(deferred)
     if (deferred.onProgress) {
       if (me._progress !== null) {
         setImmediate(() => {
