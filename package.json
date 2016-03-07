@@ -4,8 +4,8 @@
   "description": "Lightweight promise polyfill. A+ compliant. Implements notify, progress, and finally.",
   "main": "lib/core.js",
   "scripts": {
-    "compile": "webpack",
-    "test": "mocha --compilers js:babel-core/register --bail --timeout 200 --slow 99999",
+    "compile": "node node_modules/webpack/bin/webpack",
+    "test": "node node_modules/mocha/bin/mocha --compilers js:babel-core/register --bail --timeout 200 --slow 99999",
     "coverage": "babel-node node_modules/isparta/bin/isparta cover node_modules/mocha/bin/_mocha -- --compilers js:babel-core/register --bail --timeout 200 --slow 99999 -R dot"
   },
   "repository": {
