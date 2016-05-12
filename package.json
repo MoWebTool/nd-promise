@@ -1,10 +1,11 @@
 {
   "name": "nd-promise",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Lightweight promise polyfill. A+ compliant. Implements notify, progress, and finally.",
   "main": "lib/core.js",
   "scripts": {
     "compile": "node node_modules/webpack/bin/webpack",
+    "lib": "babel src/core.js -o lib/core.js",
     "test": "node node_modules/mocha/bin/mocha --compilers js:babel-core/register --bail --timeout 200 --slow 99999",
     "coverage": "babel-node node_modules/isparta/bin/isparta cover node_modules/mocha/bin/_mocha -- --compilers js:babel-core/register --bail --timeout 200 --slow 99999 -R dot"
   },
@@ -28,6 +29,7 @@
     "babel-loader": "^6.2.1",
     "babel-plugin-add-module-exports": "^0.1.2",
     "babel-preset-es2015": "^6.3.13",
+    "babel-preset-es2015-loose": "^7.0.0",
     "babel-preset-stage-0": "^6.3.13",
     "babel-register": "^6.3.13",
     "better-assert": "*",

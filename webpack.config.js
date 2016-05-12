@@ -32,7 +32,7 @@ module.exports = {
       query: {
         cacheDirectory: true,
         plugins: ['add-module-exports'],
-        presets: ['es2015', 'stage-0']
+        presets: ['es2015-loose', 'stage-0']
       }
     }]
   },
