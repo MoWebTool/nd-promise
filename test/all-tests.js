@@ -1,5 +1,5 @@
 import assert from 'better-assert'
-import Promise from '../src/core'
+import Promise from '../src'
 
 const a = { _id: 'a' }
 const b = { _id: 'b' }
@@ -42,7 +42,9 @@ describe('Promise.all(...)', () => {
       it('returns a promise for an array containing the fulfilled values', done => {
         const d = {}
         let resolveD
-        const res = Promise.all([new Promise(resolve => resolveD = resolve), A, B, C])
+        const res = Promise.all([new Promise(resolve => {
+          resolveD = resolve
+        }), A, B, C])
         assert(res instanceof Promise)
         res.then(res => {
           assert(res.length === 4)
@@ -86,7 +88,9 @@ describe('Promise.all(...)', () => {
     describe('containing at least one eventually rejected promise', () => {
       it('rejects the resulting promise', done => {
         let rejectB
-        const rejected = new Promise((resolve, reject) => rejectB = reject)
+        const rejected = new Promise((resolve, reject) => {
+          rejectB = reject
+        })
         const res = Promise.all([A, rejected, C])
         assert(res instanceof Promise)
         res.then(res => {
@@ -99,7 +103,7 @@ describe('Promise.all(...)', () => {
     })
     describe('when given a foreign promise', () => {
       it('should provide the correct value of `this`', done => {
-        const p = {then: function (onFulfilled) { onFulfilled({self: this}) }}
+        const p = { then (onFulfilled) { onFulfilled({ self: this }) } }
         Promise.all([p]).then(res => {
           assert(p === res[0].self)
         }).finally(done)

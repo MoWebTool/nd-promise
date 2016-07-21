@@ -1,5 +1,5 @@
 import assert from 'better-assert'
-import Promise from '../src/core'
+import Promise from '../src'
 
 describe('Promise#finally(done)', () => {
   describe('no value is passed in', () => {

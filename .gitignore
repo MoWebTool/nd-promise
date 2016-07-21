@@ -1,3 +1,9 @@
-.DS_Store
-coverage/
-node_modules/
+.DS_STORE
+*.bak
+*.log
+*.old
+*.out
+
+coverage
+dist
+node_modules

@@ -1,4 +1,10 @@
-.DS_Store
-coverage/
-node_modules/
-tests/
+.DS_STORE
+*.bak
+*.log
+*.old
+*.out
+
+.tools
+coverage
+node_modules
+test

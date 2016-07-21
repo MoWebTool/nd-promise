@@ -1,48 +1,20 @@
 {
   "name": "nd-promise",
   "version": "3.0.2",
-  "description": "Lightweight promise polyfill. A+ compliant. Implements notify, progress, and finally.",
-  "main": "lib/core.js",
+  "description": ":two_hearts: Lightweight promise polyfill. A+ compliant. Implements notify, progress, and finally.",
+  "main": "dist/index.js",
+  "jsnext:main": "src/index.js",
   "scripts": {
-    "compile": "node node_modules/webpack/bin/webpack",
-    "lib": "babel src/core.js -o lib/core.js",
-    "test": "node node_modules/mocha/bin/mocha --compilers js:babel-core/register --bail --timeout 200 --slow 99999",
-    "coverage": "babel-node node_modules/isparta/bin/isparta cover node_modules/mocha/bin/_mocha -- --compilers js:babel-core/register --bail --timeout 200 --slow 99999 -R dot"
+    "build": "node --harmony .tools/build",
+    "lint": "eslint --max-warnings 10 .",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "node node_modules/mocha/bin/mocha --compilers js:babel-register --bail --timeout 200 --slow 99999",
+    "coverage": "babel-node node_modules/isparta/bin/isparta cover node_modules/mocha/bin/_mocha -- --compilers js:babel-register --bail --timeout 200 --slow 99999 -R dot",
+    "release": "bash .tools/release.sh"
   },
   "repository": {
     "type": "git",
-    "url": "https://crossjs@github.com/crossjs/nd-promise.git"
-  },
-  "author": {
-    "name": "crossjs",
-    "email": "liwenfu@crossjs.com"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/crossjs/nd-promise/issues"
-  },
-  "homepage": "https://github.com/crossjs/nd-promise",
-  "devDependencies": {
-    "babel-cli": "^6.4.0",
-    "babel-core": "^6.4.0",
-    "babel-eslint": "^4.1.6",
-    "babel-loader": "^6.2.1",
-    "babel-plugin-add-module-exports": "^0.1.2",
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-es2015-loose": "^7.0.0",
-    "babel-preset-stage-0": "^6.3.13",
-    "babel-register": "^6.3.13",
-    "better-assert": "*",
-    "eslint": "^1.10.3",
-    "eslint-config-standard": "^4.4.0",
-    "eslint-loader": "^1.2.0",
-    "eslint-plugin-babel": "^3.0.0",
-    "eslint-plugin-import": "^0.12.1",
-    "eslint-plugin-standard": "^1.3.1",
-    "isparta": "^4.0.0",
-    "mocha": "*",
-    "promises-aplus-tests": "*",
-    "webpack": "^1.12.10"
+    "url": "git+https://github.com/ndfront/nd-promise.git"
   },
   "keywords": [
     "promise",
@@ -53,7 +25,39 @@
     "progress",
     "finally"
   ],
+  "author": "crossjs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ndfront/nd-promise/issues"
+  },
+  "homepage": "https://github.com/ndfront/nd-promise",
   "dependencies": {
     "setimmediate": "^1.0.4"
+  },
+  "peerDependencies": {
+    "setimmediate": "^1.0.4"
+  },
+  "devDependencies": {
+    "babel-loader": "^6.2.4",
+    "babel-plugin-__coverage__": "^11.0.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-runtime": "^6.9.0",
+    "babel-polyfill": "^6.9.1",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-es2015-rollup": "^1.1.1",
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-register": "^6.9.0",
+    "better-assert": "^1.0.2",
+    "eslint": "3.0.0",
+    "eslint-config-plato": "^0.0.0",
+    "isparta": "^4.0.0",
+    "mocha": "^2.5.3",
+    "promises-aplus-tests": "*",
+    "rollup": "^0.33.0",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-node-resolve": "^1.7.1",
+    "rollup-plugin-npm": "^2.0.0",
+    "uglify-js": "^2.5.0",
+    "webpack": "^1.13.1"
   }
 }

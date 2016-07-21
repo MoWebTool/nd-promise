@@ -1,5 +1,5 @@
 import tests from 'promises-aplus-tests'
-import Promise from '../src/core'
+import Promise from '../src'
 
 tests.mocha({
   resolved: Promise.resolve,

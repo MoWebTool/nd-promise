@@ -1,5 +1,5 @@
 import assert from 'better-assert'
-import Promise from '../src/core'
+import Promise from '../src'
 
 describe('Promise#progress(listener)', () => {
   describe('Promise.notify(progress)', () => {

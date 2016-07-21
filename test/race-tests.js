@@ -1,5 +1,5 @@
 import assert from 'better-assert'
-import Promise from '../src/core'
+import Promise from '../src'
 
 const a = { _id: 'a' }
 const b = { _id: 'b' }
@@ -83,7 +83,7 @@ describe('Promise.race(...)', () => {
     })
     describe('when given a foreign promise', () => {
       it('should provide the correct value of `this`', done => {
-        const p = {then: function (onFulfilled) { onFulfilled({self: this}) }}
+        const p = { then (onFulfilled) { onFulfilled({ self: this }) } }
         Promise.race([p]).then(res => assert(p === res.self)).finally(done)
       })
     })

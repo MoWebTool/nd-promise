@@ -1,31 +1,5 @@
 import 'setimmediate'
 
-if (!Function.prototype.bind) {
-  /*eslint-disable no-extend-native*/
-  Function.prototype.bind = function (oThis) {
-    if (typeof this !== 'function') {
-      // closest thing possible to the ECMAScript 5
-      // internal IsCallable function
-      throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable')
-    }
-
-    const aArgs = Array.prototype.slice.call(arguments, 1)
-    const fToBind = this
-    const FNOP = function () {}
-    const fBound = function () {
-      return fToBind.apply(this instanceof FNOP && oThis
-             ? this
-             : oThis,
-             aArgs.concat(Array.prototype.slice.call(arguments)))
-    }
-
-    FNOP.prototype = this.prototype
-    fBound.prototype = new FNOP()
-
-    return fBound
-  }
-}
-
 function NP (fn) {
   if (typeof this !== 'object') throw new TypeError('Promises must be constructed via new')
   if (typeof fn !== 'function') throw new TypeError('not a function')
@@ -34,31 +8,36 @@ function NP (fn) {
   this._progress = null
   this._deferreds = []
 
-  doResolve(fn, resolve.bind(this), reject.bind(this), notify.bind(this))
+  doResolve(fn, (...args) => {
+    resolve.apply(this, args)
+  }, (...args) => {
+    reject.apply(this, args)
+  }, (...args) => {
+    notify.apply(this, args)
+  })
 }
 
 function handle (deferred) {
-  const me = this
-  if (me._state === null) {
-    me._deferreds.push(deferred)
+  if (this._state === null) {
+    this._deferreds.push(deferred)
     if (deferred.onProgress) {
-      if (me._progress !== null) {
+      if (this._progress !== null) {
         setImmediate(() => {
-          deferred.onProgress(me._progress)
+          deferred.onProgress(this._progress)
         })
       }
     }
     return
   }
   setImmediate(() => {
-    const cb = me._state ? deferred.onFulfilled : deferred.onRejected
+    const cb = this._state ? deferred.onFulfilled : deferred.onRejected
     if (cb === null) {
-      (me._state ? deferred.resolve : deferred.reject)(me._value)
+      (this._state ? deferred.resolve : deferred.reject)(this._value)
       return
     }
     let ret
     try {
-      ret = cb(me._value)
+      ret = cb(this._value)
     } catch (e) {
       deferred.reject(e)
       return
@@ -76,7 +55,15 @@ function resolve (newValue) {
     if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
       const then = newValue.then
       if (typeof then === 'function') {
-        doResolve(then.bind(newValue), resolve.bind(this), reject.bind(this), notify.bind(this))
+        doResolve((...args) => {
+          then.apply(newValue, args)
+        }, (...args) => {
+          resolve.apply(this, args)
+        }, (...args) => {
+          reject.apply(this, args)
+        }, (...args) => {
+          notify.apply(this, args)
+        })
         return
       }
     }
@@ -162,9 +149,8 @@ NP.prototype.progress = function (onProgress) {
 }
 
 NP.prototype.then = function (onFulfilled, onRejected, onProgress) {
-  const me = this
   return new NP((resolve, reject, notify) => {
-    handle.call(me, new Handler(onFulfilled, onRejected, onProgress, resolve, reject, notify))
+    handle.call(this, new Handler(onFulfilled, onRejected, onProgress, resolve, reject, notify))
   })
 }
 
