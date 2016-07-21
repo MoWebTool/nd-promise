@@ -1,6 +1,6 @@
 {
   "name": "nd-promise",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": ":two_hearts: Lightweight promise polyfill. A+ compliant. Implements notify, progress, and finally.",
   "main": "dist/index.js",
   "jsnext:main": "src/index.js",
